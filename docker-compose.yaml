@@ -1,0 +1,35 @@
+version: '3.7'
+services:
+
+  osticket-app:
+    image: tschekal/osticket_apache
+    container_name: osticket-app
+    links:
+      - osticket-db
+      - osticket-smtp
+    ports:
+      - 8090:80
+    volumes:
+      - ./data/:/var/www/osTicket
+      - ./logs/:/var/www/logs/
+    restart: always
+
+  osticket-db:
+    image: mariadb
+    container_name: osticket-db
+    volumes:
+      - /opt/osticket/db/:/var/lib/mysql
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_ROOT_HOST=osticket-db
+      - MYSQL_USER=osticket
+      - MYSQL_PASSWORD=<YOURPASSWORDHERE>
+      - MYSQL_DATABASE=osticket
+    restart: always
+
+  osticket-smtp:
+    image: namshi/smtp
+    container_name: osticket-smtp
+    environment:
+      - MAILNAME=<YOURMAILNAME> 
+    restart: always
